@@ -4,6 +4,7 @@ import {IExtra} from '../interfaces/IExtra';
 import {IOperationExtended} from '../interfaces/IOperationExtended';
 import {IParameterExtended} from '../interfaces/IParameterExtended';
 import {ISpecExtended} from '../interfaces/ISpecExtended';
+import {store} from '../../../../store'
 
 export function configure(operation: IOperationExtended, spec: ISpecExtended) {
   let path: string = operation._pathName;
@@ -32,9 +33,11 @@ export function configure(operation: IOperationExtended, spec: ISpecExtended) {
         headers[param.name] = value;
         break;
       case 'formData':
-        body = body || new FormData();
-        // values.contentType = (param.type === 'file') ? undefined : values.contentType;
-        body.append(param.name, value);
+        headers['Content-Type'] = 'multipart/form-data';
+        const formData = new FormData();
+        const imagefile = document.querySelector('#'+window.streamrFileUploadId)
+        formData.append("file", imagefile.files[0])
+        body = formData
         break;
       case 'body':
         body = body || value;
@@ -42,14 +45,21 @@ export function configure(operation: IOperationExtended, spec: ISpecExtended) {
     }
   }
 
-  const config: any = {
-    method: operation._method,
-    url: spec._._scheme + '://' + merge(merge(spec.host, spec.basePath), path)
-  };
+  // Streamr Token injection
+  let streamrToken = store.state.settings.token
 
-  if (Object.keys(headers).length) {
-    config.headers = headers;
+  if (streamrToken !== "" && !streamrToken.startsWith("token ")) {
+    streamrToken = `token ${streamrToken}`
   }
+
+  let config: any = {
+    method: operation._method,
+    url: spec._._scheme + '://' + merge(merge(spec.host, spec.basePath), path),
+    headers: {
+      'Content-Type': 'application/json',
+      authorization: streamrToken
+    },
+  };
 
   if (Object.keys(query).length) {
     config.params = query;

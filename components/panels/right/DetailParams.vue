@@ -13,6 +13,12 @@
       v-divider
       v-card.pt-2.pb-2
         app-parameter.pl-3.pr-3(:item="parameter" v-for="(parameter, parameterIndex) in item.parameters", :key="parameterIndex")
+        v-spacer
+        pre.app-example.app-pre.ml-3.mr-3.pa-1.mt-1(v-if="!!parameterSchema")
+          h3 Request Body Schema:
+          app-model(:item="parameterSchema")
+          h3 Request Body Example:
+          app-example(:item="parameterSchema")
 </template>
 
 <script>
@@ -55,6 +61,19 @@
         types.SPEC,
         types.VIEW_DARK
       ]),
+      parameterSchema () {
+        var schemy
+        if (this.item && this.item.parameters) {
+          this.item.parameters.forEach(function (element) {
+            // console.log(element)
+            if (typeof element.schema !== 'undefined') {
+              schemy = element.schema
+            }
+          })
+        }
+
+        return schemy
+      },
       schema () {
         return schema(this.item)
       },
@@ -100,7 +119,7 @@
 
 <style scoped lang="stylus">
   .btn--response
-    font-family "Roboto Mono", monospace
+    font-family "IBM Plex Mono", monospace
     height 24px;
     min-width 48px
     padding 0
@@ -136,7 +155,7 @@
     font-size 13px !important
     height 19px !important
     padding 0 4px
-    font-family Roboto, sans-serif
+    font-family 'IBM Plex Sans', sans-serif
 
   /*
   .toggle-round >>> button:first-child
