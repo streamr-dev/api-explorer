@@ -3,6 +3,9 @@ This API Explorer will be a handy resource for new developers that wish to test 
 
 [Web App](https://streamr.com/api-explorer)
 
+![API Explorer](https://raw.githubusercontent.com/streamr-dev/api-explorer/api-explorer-fixes-streamr-customization/API_explorer_B.png "API Explorer")
+
+
 ## Explorer Features
 - Test any Streamr Restful API endpoint live in the browser.
 - Straightforward authentication with your account API key.
