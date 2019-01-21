@@ -36,6 +36,7 @@
     "chalk": "2.4.0",
     "ciena-graphlib": "1.0.8",
     "circular-json": "0.5.3",
+    "clean-webpack-plugin": "^1.0.0",
     "codemirror": "5.36.0",
     "connect-history-api-fallback": "1.5.0",
     "copy-webpack-plugin": "4.5.1",
