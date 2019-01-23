@@ -1,0 +1,26 @@
+language: node_js
+node_js:
+- '8'
+sudo: true
+branches:
+  only:
+  - master
+  - "/^v\\d+\\.\\d+(\\.\\d+)?(-\\S*)?$/"
+before_install:
+- pip install awscli --upgrade --user
+- rm -f ${TRAVIS_BUILD_DIR}/yarn.lock
+- npm i -g npm@6.4.0
+install:
+- npm ci
+- true
+jobs:
+  include:
+  - stage: Api-Explorer Build Staging
+    env:
+    - NODE_ENV=production
+    script: "$TRAVIS_BUILD_DIR/travis_scripts/build-api-explorer-stg.sh"
+  - stage: Api-Explorer Build Production
+    if: NOT type IN (pull_request)
+    env:
+    - NODE_ENV=production
+    script: "$TRAVIS_BUILD_DIR/travis_scripts/build-api-explorer.sh"
