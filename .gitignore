@@ -11,8 +11,6 @@ debug.log
 
 .idea
 
-package-lock.json
-
 # Nuxt build
 .nuxt
 
