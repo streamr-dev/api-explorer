@@ -32,7 +32,7 @@
               v-text-field(hide-details autofocus label="API key" @change="onChange")
               h3.pr-3.pt-3 
               |  Your API Key is located in your 
-              a(target="_blank" href='https://www.streamr.com/profile/edit') Streamr Profile
+              a(target="_blank" href='https://streamr.network/core/profile/edit') Streamr Profile
           template(v-else-if="sec.type === 'basic'")
             h3.pl-3.pr-3.pt-3.title Basic Authentication
             div.pl-3.pr-3.pt-1(v-if="sec._.description" v-markdown="sec._")
