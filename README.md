@@ -1,7 +1,7 @@
 # Streamr API Explorer
 This API Explorer will be a handy resource for new developers that wish to test and experiment with Streamr’s Data Streams, Canvases, Dashboards and Marketplace Products.
 
-[Web App](https://streamr.com/api-explorer)
+[Web App](https://api-explorer.streamr.com)
 
 ![API Explorer](https://raw.githubusercontent.com/streamr-dev/api-explorer/api-explorer-fixes-streamr-customization/API_explorer_B.png "API Explorer")
 
