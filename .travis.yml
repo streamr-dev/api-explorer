@@ -19,7 +19,6 @@ jobs:
     env:
     - NODE_ENV=production
     script:
-    - npm install
     - npm run vendor:icons-bundle
     - npm run webpack:build
     deploy:
@@ -39,7 +38,6 @@ jobs:
     env:
     - NODE_ENV=production
     script:
-    - npm install
     - npm run vendor:icons-bundle
     - npm run webpack:build
     deploy:
