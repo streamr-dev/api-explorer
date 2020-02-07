@@ -1,7 +1,8 @@
+os: linux
+dist: bionic
 language: node_js
 node_js:
 - '8'
-sudo: true
 branches:
   only:
   - master
@@ -21,16 +22,43 @@ jobs:
     script:
     - npm run vendor:icons-bundle
     - npm run webpack:build
+    - mkdir $TRAVIS_BUILD_DIR/build-cd
+    - mv $TRAVIS_BUILD_DIR/.codedeploy/.appspec.yml $TRAVIS_BUILD_DIR/build-cd/appspec.yml
+    - mv $TRAVIS_BUILD_DIR/.codedeploy $TRAVIS_BUILD_DIR/build-cd/
+    - mv $TRAVIS_BUILD_DIR/dist/index.html $TRAVIS_BUILD_DIR/build-cd/index.html
+    - tar -czvf $TRAVIS_BUILD_DIR/build-cd/api-explorer-${TRAVIS_JOB_ID}.tar -C $TRAVIS_BUILD_DIR/build-cd index.html appspec.yml .codedeploy
+    - rm -rf $TRAVIS_BUILD_DIR/build-cd/*.html $TRAVIS_BUILD_DIR/build-cd/.codedeploy/ $TRAVIS_BUILD_DIR/build-cd/*.yml
     deploy:
     - provider: s3
       access_key_id: AKIAI3FGPGMK3EREJJTQ
       secret_access_key:
         secure: lDYOQabCULKF1mDvYguA/mF9rZomlRTe7aTvXgienyjrp/gj8azjAi6Q+Z/UJiKtcDdWxtKGYBhUohbVSjN4VdGSdqhdHqf4yT9cgV0B0l1Yu4BYKSmy8HV+yLJ1NJ5vG9UM7EZd/CiwkjumBylnBjl+apZiMRtQa/XPT0QMO+adRG/W3AcceMLu73ItICUoaIbXy5Ti2MUWPEwf87IMSP/F/S9TFGEW5n3+bK5iT/fmjRHt2+4D7P2bE+zOXlpDmF4or2Q0SfROupbspGwSt2vow0Vxr7oAeyuDjbVvgaMvu9iUugFeGHPepWArnyjk5TZOvoCMqHKDIHPUdKu9OHTFu+CZOBbyXR1r3n71Rn2pPALHDUG58tmD7W9GUQSaCJtbyPgbQAlynyXa76gsut5dlF+LJfqB1ADb4Du6D1ZAk+fPZxbET72POdSAdDh9WqoWVsOPMMs7LxvLI0KoFxSJOdgxSarVx3Dl5R3QUg7yrAer3Z1gcGeIU1FzVbfpLAkY5sKljwr9ssCGvvrtPAoBp6ylmXY9usNNH+0obuwr7WURqgrborG5v/L4rjuihlf3GALVkf7X9qqiMHXJsd9wJ3rxLseAMbz6rhiNQYpDa/S16zwHraNM3OM0jHdNTWGQEgG+qSsuWhTDYuZNfakfHs2e7Pbsqe3Ou/KJ+hk=
       bucket: eu-west-1-stg-streamr-api-explorer
-      local-dir: "$TRAVIS_BUILD_DIR/dist"
+      local_dir: "$TRAVIS_BUILD_DIR/dist"
       acl: private
       region: eu-west-1
-      skip_cleanup: true
+      on:
+        branch: master
+    - provider: s3
+      access_key_id: AKIAI3FGPGMK3EREJJTQ
+      secret_access_key:
+        secure: lDYOQabCULKF1mDvYguA/mF9rZomlRTe7aTvXgienyjrp/gj8azjAi6Q+Z/UJiKtcDdWxtKGYBhUohbVSjN4VdGSdqhdHqf4yT9cgV0B0l1Yu4BYKSmy8HV+yLJ1NJ5vG9UM7EZd/CiwkjumBylnBjl+apZiMRtQa/XPT0QMO+adRG/W3AcceMLu73ItICUoaIbXy5Ti2MUWPEwf87IMSP/F/S9TFGEW5n3+bK5iT/fmjRHt2+4D7P2bE+zOXlpDmF4or2Q0SfROupbspGwSt2vow0Vxr7oAeyuDjbVvgaMvu9iUugFeGHPepWArnyjk5TZOvoCMqHKDIHPUdKu9OHTFu+CZOBbyXR1r3n71Rn2pPALHDUG58tmD7W9GUQSaCJtbyPgbQAlynyXa76gsut5dlF+LJfqB1ADb4Du6D1ZAk+fPZxbET72POdSAdDh9WqoWVsOPMMs7LxvLI0KoFxSJOdgxSarVx3Dl5R3QUg7yrAer3Z1gcGeIU1FzVbfpLAkY5sKljwr9ssCGvvrtPAoBp6ylmXY9usNNH+0obuwr7WURqgrborG5v/L4rjuihlf3GALVkf7X9qqiMHXJsd9wJ3rxLseAMbz6rhiNQYpDa/S16zwHraNM3OM0jHdNTWGQEgG+qSsuWhTDYuZNfakfHs2e7Pbsqe3Ou/KJ+hk=
+      bucket: eu-west-1-stg-streamr-vault
+      local_dir: "$TRAVIS_BUILD_DIR/build"
+      upload_dir: api-explorer/releases
+      acl: private
+      region: eu-west-1
+      on:
+        branch: master
+    - provider: codedeploy
+      access_key_id: AKIAI3FGPGMK3EREJJTQ
+      secret_access_key:
+        secure: lDYOQabCULKF1mDvYguA/mF9rZomlRTe7aTvXgienyjrp/gj8azjAi6Q+Z/UJiKtcDdWxtKGYBhUohbVSjN4VdGSdqhdHqf4yT9cgV0B0l1Yu4BYKSmy8HV+yLJ1NJ5vG9UM7EZd/CiwkjumBylnBjl+apZiMRtQa/XPT0QMO+adRG/W3AcceMLu73ItICUoaIbXy5Ti2MUWPEwf87IMSP/F/S9TFGEW5n3+bK5iT/fmjRHt2+4D7P2bE+zOXlpDmF4or2Q0SfROupbspGwSt2vow0Vxr7oAeyuDjbVvgaMvu9iUugFeGHPepWArnyjk5TZOvoCMqHKDIHPUdKu9OHTFu+CZOBbyXR1r3n71Rn2pPALHDUG58tmD7W9GUQSaCJtbyPgbQAlynyXa76gsut5dlF+LJfqB1ADb4Du6D1ZAk+fPZxbET72POdSAdDh9WqoWVsOPMMs7LxvLI0KoFxSJOdgxSarVx3Dl5R3QUg7yrAer3Z1gcGeIU1FzVbfpLAkY5sKljwr9ssCGvvrtPAoBp6ylmXY9usNNH+0obuwr7WURqgrborG5v/L4rjuihlf3GALVkf7X9qqiMHXJsd9wJ3rxLseAMbz6rhiNQYpDa/S16zwHraNM3OM0jHdNTWGQEgG+qSsuWhTDYuZNfakfHs2e7Pbsqe3Ou/KJ+hk=
+      bucket: eu-west-1-stg-streamr-vault
+      key: api-explorer/releases/api-explorer-${TRAVIS_JOB_ID}.tar
+      application: eu-west-1-stg-api-explorer-codedeploy
+      deployment_group: eu-west-1-stg-api-explorer-deployment-group
+      region: eu-west-1
       on:
         branch: master
   - stage: Api-Explorer Build Production
@@ -46,9 +74,8 @@ jobs:
       secret_access_key:
         secure: mnT9Kx/4ARKwXD+XKicNjkvJSgXXvUDRoWxsbXP9EdQ9OyoaYMz5LLtvyItZS3nysdnF8bvv1Fl+aoCfj4+sBCXxVCx/Vp2/yHtpInlEQv39aFrOAZ0locuwvHXjJTojwcob1NDkpX8bhLqIYiQ3e5MAYT16eYYjVMCnILjhfpINGBC7UtPPbTqLTzrIqTesPXQUqd1dD8UAc2ojuC6jP96hVg1FQdKdgSUriuHXv+3+3sxujpz5OsLRHnblHaZ9mYEUWpOkrV2XRQ20w8xJuSocD2QGFP5ej74O0JaYAUgwaysg3jOeBQi7R3Mu3Fgo/9H9bbWiBrt2O4Ephub9VXwNEBMj/EQ34S0c7ss4x9nLgRVMBA2D4K21pzlxqVxMW3z9JgQascQd0Av7iR136hqnT8vkgqh59npQp1nWwGLYMouAv7w9/WPBl47hU+ahNr0gsEEMPviUz+9pHk/JYPjCv8FO/mhxjVMQq5gBaq2FkC5nkxNC8OYQPsbJ8Z2HZMyqeBib6Y2rkj1/nDs1vuRP2lR4BPsiP0kmnH7jT1qblmAOIhIKSsMdjc5EMcoleiD9taUw3sjWuuFE+OpDDnsyGeZ7eKhhKlAb1JQO4vtCMbuLccAH6CuyehYYsFExER6ffzPzE+7one+6ny1weIowaLM0avzN7FmQZ/DybaI=
       bucket: eu-west-1-streamr-api-explorer
-      local-dir: "$TRAVIS_BUILD_DIR/dist"
+      local_dir: "$TRAVIS_BUILD_DIR/dist"
       acl: private
       region: eu-west-1
-      skip_cleanup: true
       on:
         tags: true
