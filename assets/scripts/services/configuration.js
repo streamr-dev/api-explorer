@@ -5,6 +5,7 @@ import defaultConfiguration from '../../data/configuration'
 // export const configuration = window.OAX.cfg = {
 export const configuration = {
   ...defaultConfiguration,
+  'url': process.env.SWAGGER_PATH,
   // ...(window.OAX.cfg || {}),
   ...{
     components: {
