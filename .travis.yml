@@ -18,6 +18,7 @@ jobs:
   - stage: Api-Explorer Build Staging
     env:
     - NODE_ENV=production
+    - PUBLIC_PATH=https://cdn.streamr.com
     script:
     - npm install
     - npm run vendor:icons-bundle
@@ -38,6 +39,7 @@ jobs:
     if: NOT type IN (pull_request)
     env:
     - NODE_ENV=production
+    - PUBLIC_PATH=https://cdn.streamr.com
     script:
     - npm install
     - npm run vendor:icons-bundle
