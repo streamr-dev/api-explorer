@@ -18,7 +18,7 @@ jobs:
   - stage: Api-Explorer Build Staging
     env:
     - NODE_ENV=production
-    - PUBLIC_PATH=https://cdn.streamr.com
+    - PUBLIC_PATH=https://marketplace-staging.streamr.com
     script:
     - npm install
     - npm run vendor:icons-bundle
