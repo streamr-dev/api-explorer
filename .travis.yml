@@ -5,8 +5,8 @@ sudo: true
 branches:
   only:
   - master
-  - development
   - "/^v\\d+\\.\\d+(\\.\\d+)?(-\\S*)?$/"
+  - development
 before_install:
 - pip install awscli --upgrade --user
 - rm -f ${TRAVIS_BUILD_DIR}/yarn.lock
@@ -22,17 +22,46 @@ jobs:
     - PUBLIC_PATH=https://marketplace-staging.streamr.com
     - SWAGGER_PATH=https://marketplace-staging.streamr.com/swagger.json
     script:
-    - npm install
     - npm run vendor:icons-bundle
     - npm run webpack:build
+    - mkdir $TRAVIS_BUILD_DIR/build-cd
+    - mv $TRAVIS_BUILD_DIR/.codedeploy/.appspec.yml $TRAVIS_BUILD_DIR/build-cd/appspec.yml
+    - mv $TRAVIS_BUILD_DIR/.codedeploy $TRAVIS_BUILD_DIR/build-cd/
+    - mv $TRAVIS_BUILD_DIR/dist/index.html $TRAVIS_BUILD_DIR/build-cd/index.html
+    - tar -czvf $TRAVIS_BUILD_DIR/build-cd/api-explorer-${TRAVIS_JOB_ID}.tar -C $TRAVIS_BUILD_DIR/build-cd index.html appspec.yml .codedeploy
+    - rm -rf $TRAVIS_BUILD_DIR/build-cd/*.html $TRAVIS_BUILD_DIR/build-cd/.codedeploy/ $TRAVIS_BUILD_DIR/build-cd/*.yml
     deploy:
     - provider: s3
       access_key_id: AKIAI3FGPGMK3EREJJTQ
       secret_access_key:
         secure: lDYOQabCULKF1mDvYguA/mF9rZomlRTe7aTvXgienyjrp/gj8azjAi6Q+Z/UJiKtcDdWxtKGYBhUohbVSjN4VdGSdqhdHqf4yT9cgV0B0l1Yu4BYKSmy8HV+yLJ1NJ5vG9UM7EZd/CiwkjumBylnBjl+apZiMRtQa/XPT0QMO+adRG/W3AcceMLu73ItICUoaIbXy5Ti2MUWPEwf87IMSP/F/S9TFGEW5n3+bK5iT/fmjRHt2+4D7P2bE+zOXlpDmF4or2Q0SfROupbspGwSt2vow0Vxr7oAeyuDjbVvgaMvu9iUugFeGHPepWArnyjk5TZOvoCMqHKDIHPUdKu9OHTFu+CZOBbyXR1r3n71Rn2pPALHDUG58tmD7W9GUQSaCJtbyPgbQAlynyXa76gsut5dlF+LJfqB1ADb4Du6D1ZAk+fPZxbET72POdSAdDh9WqoWVsOPMMs7LxvLI0KoFxSJOdgxSarVx3Dl5R3QUg7yrAer3Z1gcGeIU1FzVbfpLAkY5sKljwr9ssCGvvrtPAoBp6ylmXY9usNNH+0obuwr7WURqgrborG5v/L4rjuihlf3GALVkf7X9qqiMHXJsd9wJ3rxLseAMbz6rhiNQYpDa/S16zwHraNM3OM0jHdNTWGQEgG+qSsuWhTDYuZNfakfHs2e7Pbsqe3Ou/KJ+hk=
       bucket: eu-west-1-stg-streamr-api-explorer
-      local-dir: "$TRAVIS_BUILD_DIR/dist"
+      local_dir: "$TRAVIS_BUILD_DIR/dist"
       acl: private
+      region: eu-west-1
+      skip_cleanup: true
+      on:
+        branch: development
+    - provider: s3
+      access_key_id: AKIAI3FGPGMK3EREJJTQ
+      secret_access_key:
+        secure: lDYOQabCULKF1mDvYguA/mF9rZomlRTe7aTvXgienyjrp/gj8azjAi6Q+Z/UJiKtcDdWxtKGYBhUohbVSjN4VdGSdqhdHqf4yT9cgV0B0l1Yu4BYKSmy8HV+yLJ1NJ5vG9UM7EZd/CiwkjumBylnBjl+apZiMRtQa/XPT0QMO+adRG/W3AcceMLu73ItICUoaIbXy5Ti2MUWPEwf87IMSP/F/S9TFGEW5n3+bK5iT/fmjRHt2+4D7P2bE+zOXlpDmF4or2Q0SfROupbspGwSt2vow0Vxr7oAeyuDjbVvgaMvu9iUugFeGHPepWArnyjk5TZOvoCMqHKDIHPUdKu9OHTFu+CZOBbyXR1r3n71Rn2pPALHDUG58tmD7W9GUQSaCJtbyPgbQAlynyXa76gsut5dlF+LJfqB1ADb4Du6D1ZAk+fPZxbET72POdSAdDh9WqoWVsOPMMs7LxvLI0KoFxSJOdgxSarVx3Dl5R3QUg7yrAer3Z1gcGeIU1FzVbfpLAkY5sKljwr9ssCGvvrtPAoBp6ylmXY9usNNH+0obuwr7WURqgrborG5v/L4rjuihlf3GALVkf7X9qqiMHXJsd9wJ3rxLseAMbz6rhiNQYpDa/S16zwHraNM3OM0jHdNTWGQEgG+qSsuWhTDYuZNfakfHs2e7Pbsqe3Ou/KJ+hk=
+      bucket: eu-west-1-stg-streamr-vault
+      local_dir: "$TRAVIS_BUILD_DIR/build-cd"
+      upload_dir: api-explorer/releases
+      acl: private
+      region: eu-west-1
+      skip_cleanup: true
+      on:
+        branch: development
+    - provider: codedeploy
+      access_key_id: AKIAI3FGPGMK3EREJJTQ
+      secret_access_key:
+        secure: lDYOQabCULKF1mDvYguA/mF9rZomlRTe7aTvXgienyjrp/gj8azjAi6Q+Z/UJiKtcDdWxtKGYBhUohbVSjN4VdGSdqhdHqf4yT9cgV0B0l1Yu4BYKSmy8HV+yLJ1NJ5vG9UM7EZd/CiwkjumBylnBjl+apZiMRtQa/XPT0QMO+adRG/W3AcceMLu73ItICUoaIbXy5Ti2MUWPEwf87IMSP/F/S9TFGEW5n3+bK5iT/fmjRHt2+4D7P2bE+zOXlpDmF4or2Q0SfROupbspGwSt2vow0Vxr7oAeyuDjbVvgaMvu9iUugFeGHPepWArnyjk5TZOvoCMqHKDIHPUdKu9OHTFu+CZOBbyXR1r3n71Rn2pPALHDUG58tmD7W9GUQSaCJtbyPgbQAlynyXa76gsut5dlF+LJfqB1ADb4Du6D1ZAk+fPZxbET72POdSAdDh9WqoWVsOPMMs7LxvLI0KoFxSJOdgxSarVx3Dl5R3QUg7yrAer3Z1gcGeIU1FzVbfpLAkY5sKljwr9ssCGvvrtPAoBp6ylmXY9usNNH+0obuwr7WURqgrborG5v/L4rjuihlf3GALVkf7X9qqiMHXJsd9wJ3rxLseAMbz6rhiNQYpDa/S16zwHraNM3OM0jHdNTWGQEgG+qSsuWhTDYuZNfakfHs2e7Pbsqe3Ou/KJ+hk=
+      bucket: eu-west-1-stg-streamr-vault
+      key: api-explorer/releases/api-explorer-${TRAVIS_JOB_ID}.tar
+      application: eu-west-1-stg-api-explorer-codedeploy
+      deployment_group: eu-west-1-stg-api-explorer-deployment-group
       region: eu-west-1
       skip_cleanup: true
       on:
