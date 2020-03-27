@@ -5,6 +5,7 @@ sudo: true
 branches:
   only:
   - master
+  - development
   - "/^v\\d+\\.\\d+(\\.\\d+)?(-\\S*)?$/"
 before_install:
 - pip install awscli --upgrade --user
@@ -19,6 +20,7 @@ jobs:
     env:
     - NODE_ENV=production
     - PUBLIC_PATH=https://marketplace-staging.streamr.com
+    - SWAGGER_PATH=https://marketplace-staging.streamr.com/swagger.json
     script:
     - npm install
     - npm run vendor:icons-bundle
@@ -34,7 +36,7 @@ jobs:
       region: eu-west-1
       skip_cleanup: true
       on:
-        branch: master
+        branch: development
   - stage: Api-Explorer Build Production
     if: NOT type IN (pull_request)
     env:
