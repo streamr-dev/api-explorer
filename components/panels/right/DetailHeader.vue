@@ -8,7 +8,7 @@
   import { mapMutations } from 'vuex'
   import * as types from '../../../store/types'
 
-  import appOperation from '../../elements/api/MethodBlock'
+  import appOperation from '../../elements/api/SidebarMethodBlock'
 
   import markdown from '../../directives/markdown'
 
