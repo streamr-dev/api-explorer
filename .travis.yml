@@ -19,7 +19,7 @@ jobs:
   - stage: Api-Explorer Build Staging
     env:
     - NODE_ENV=production
-    - PUBLIC_PATH=https://api-explorer-staging.streamr.com
+    - PUBLIC_PATH=https://api-explorer-staging.streamr.network
     - SWAGGER_PATH=https://marketplace-staging.streamr.com/swagger.json
     script:
     - npm run vendor:icons-bundle
