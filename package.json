@@ -1,7 +1,7 @@
 {
   "name": "api-explorer",
   "description": "OpenAPI Specification Explorer",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "author": "Jan Forst <ensonador@gmail.com>",
   "browserslist": [
     "> 5%",
