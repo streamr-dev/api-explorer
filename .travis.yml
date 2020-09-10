@@ -20,7 +20,7 @@ jobs:
     env:
     - NODE_ENV=production
     - PUBLIC_PATH=https://marketplace-staging.streamr.com
-    - SWAGGER_PATH=https://marketplace-staging.streamr.com/swagger.json
+    - SWAGGER_PATH=
     script:
     - npm run vendor:icons-bundle
     - npm run webpack:build
@@ -70,7 +70,7 @@ jobs:
     if: NOT type IN (pull_request)
     env:
     - NODE_ENV=production
-    - PUBLIC_PATH=https://cdn.streamr.com
+    - PUBLIC_PATH=
     script:
     - npm install
     - npm run vendor:icons-bundle
