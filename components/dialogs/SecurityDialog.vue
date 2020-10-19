@@ -29,10 +29,8 @@
           template(v-else-if="sec.type === 'apiKey'")
             div.pl-3.pr-3.pt-1(v-if="sec._.description" v-markdown="sec._")
             .pa-3
-              v-text-field(hide-details autofocus label="API key" @change="onChange")
-              h3.pr-3.pt-3 
-              |  Your API Key is located in your 
-              a(target="_blank" href='https://streamr.network/core/profile/edit') Streamr Profile
+              |  Authenticate into Streamr using Metamask. 
+              a(target="_blank" href='https://streamr.network/docs/getting-started') Check out the Docs if you need help with this.
           template(v-else-if="sec.type === 'basic'")
             h3.pl-3.pr-3.pt-3.title Basic Authentication
             div.pl-3.pr-3.pt-1(v-if="sec._.description" v-markdown="sec._")
@@ -43,10 +41,19 @@
 
 <script>
   import { mapMutations, mapGetters } from 'vuex'
+  import StreamrClient from 'streamr-client'
   import * as types from '../../store/types'
   import { first } from '../../assets/scripts/utils/first'
   import { oauth2, name } from '../../assets/scripts/utils/security'
   import markdown from '../../components/directives/markdown'
+
+  const ethEnabled = () => {
+    if (window.ethereum) {
+      window.ethereum.enable()
+      return true
+    }
+    return false
+  }
 
   export default {
     directives: {
@@ -103,10 +110,25 @@
       }
     },
     watch: {
-      SPEC: function (val) { this.setTab(val) },
-      active: function (val) {
+      SPEC: function (val) {
+        this.setTab(val)
+      },
+      active: async function (val) {
         if (val) {
           this.setTab(this.SPEC)
+
+          if (ethEnabled()) {
+            const client = new StreamrClient({
+              auth: {
+                provider: window.ethereum
+              }
+            })
+
+            const sessionToken = await client.session.getSessionToken()
+            this.SETTINGS_SET_TOKEN(sessionToken)
+          } else {
+            alert('Please install an Ethereum-compatible browser or extension like MetaMask to use this dApp!')
+          }
         }
       }
     }

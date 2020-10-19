@@ -103,6 +103,7 @@
     "serialize-error": "2.1.0",
     "shelljs": "0.8.1",
     "showdown": "1.8.6",
+    "streamr-client": "^4.1.2",
     "stylint": "1.5.9",
     "stylint-json-reporter": "0.3.1",
     "stylus": "0.54.5",

@@ -48,8 +48,8 @@ export function configure(operation: IOperationExtended, spec: ISpecExtended) {
   // Streamr Token injection
   let streamrToken = store.state.settings.token
 
-  if (streamrToken !== "" && !streamrToken.startsWith("token ")) {
-    streamrToken = `token ${streamrToken}`
+  if (streamrToken !== "" && !streamrToken.startsWith("Bearer ")) {
+    streamrToken = `Bearer ${streamrToken}`
   }
 
   let config: any = {
