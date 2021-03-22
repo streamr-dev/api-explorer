@@ -10,7 +10,7 @@ branches:
 before_install:
 - pip install awscli --upgrade --user
 - rm -f ${TRAVIS_BUILD_DIR}/yarn.lock
-- npm i -g npm@6.4.0
+- npm i -g npm@6.14.11
 install:
 - npm ci
 jobs:
