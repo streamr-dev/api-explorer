@@ -1,6 +1,6 @@
 language: node_js
 node_js:
-- '8'
+- '14'
 sudo: true
 branches:
   only:
@@ -13,7 +13,6 @@ before_install:
 - npm i -g npm@6.4.0
 install:
 - npm ci
-- true
 jobs:
   include:
   - stage: Api-Explorer Build Staging
@@ -71,6 +70,7 @@ jobs:
     env:
     - NODE_ENV=production
     - PUBLIC_PATH=
+    - SWAGGER_PATH=https://raw.githubusercontent.com/streamr-dev/engine-and-editor/master/docs/swagger.json
     script:
     - npm ci
     - npm run vendor:icons-bundle
