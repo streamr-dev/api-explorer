@@ -1,6 +1,6 @@
 language: node_js
 node_js:
-- '8'
+- '14'
 sudo: true
 branches:
   only:
@@ -10,17 +10,16 @@ branches:
 before_install:
 - pip install awscli --upgrade --user
 - rm -f ${TRAVIS_BUILD_DIR}/yarn.lock
-- npm i -g npm@6.4.0
+- npm i -g npm@6.14.11
 install:
 - npm ci
-- true
 jobs:
   include:
   - stage: Api-Explorer Build Staging
     env:
     - NODE_ENV=production
     - PUBLIC_PATH=https://api-explorer-staging.streamr.network
-    - SWAGGER_PATH=https://marketplace-staging.streamr.com/swagger.json
+    - SWAGGER_PATH=
     script:
     - npm run vendor:icons-bundle
     - npm run webpack:build
@@ -52,7 +51,8 @@ jobs:
     if: NOT type IN (pull_request)
     env:
     - NODE_ENV=production
-    - PUBLIC_PATH=https://cdn.streamr.com
+    - PUBLIC_PATH=
+    - SWAGGER_PATH=https://raw.githubusercontent.com/streamr-dev/engine-and-editor/master/docs/swagger.json
     script:
     - npm run vendor:icons-bundle
     - npm run webpack:build
