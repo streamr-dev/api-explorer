@@ -1,5 +1,5 @@
 {
-  "url": "https://raw.githubusercontent.com/streamr-dev/engine-and-editor/master/docs/swagger.json",
+  "url": "https://streamr-dev.github.io/engine-and-editor/swagger.json",
   "defaultTitle": "API",
   "proxy": "https://cors-anywhere.herokuapp.com/",
   "defaultDarkTheme": false,
