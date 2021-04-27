@@ -52,7 +52,7 @@ jobs:
     env:
     - NODE_ENV=production
     - PUBLIC_PATH=
-    - SWAGGER_PATH=https://streamr-dev.github.io/engine-and-editor/swagger.json
+    - SWAGGER_PATH=https://streamr-dev.github.io/core-api/swagger.json
     script:
     - npm run vendor:icons-bundle
     - npm run webpack:build
