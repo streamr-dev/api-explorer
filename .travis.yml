@@ -8,8 +8,6 @@ branches:
   - "/^v\\d+\\.\\d+(\\.\\d+)?(-\\S*)?$/"
   - development
 before_install:
-- pip install awscli --upgrade --user
-- rm -f ${TRAVIS_BUILD_DIR}/yarn.lock
 - npm i -g npm@6.14.11
 install:
 - npm ci
